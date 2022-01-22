@@ -17,19 +17,25 @@ print(ds)                #checking datasets
 
 x = ds['x'][:]           #x location [m]
 y = ds['y'][:]           #y location [m]
-v = np.shape(ds['v'][:]) #absolute velocity [m/yr]
+v = ds['v'][:]           #absolute velocity [m/yr]
+vx = ds['vx'][:]         #x velocity [m/yr]
+vy = ds['vy'][:]         #y velocity [m/yr]
+v_err  = ds['v_err'][:]  #absolute velocity error [m/yr]
+vx_err = ds['vx_err'][:] #x velocity error [m/yr]
+vy_err = ds['vy_err'][:] #y velocity error [m/yr]
 
-
+#Making a meshgrid
 X,Y = np.meshgrid(x,y)
 
+#PLOTTING
+#Absolute velocity
+print('Max velocity', np.max(v[~np.isnan(v)]),    'm/yr \n',\
+      'Min velocity', np.min(v[~np.isnan(v)]),    'm/yr \n',\
+      'Avg velocity', np.average(v[~np.isnan(v)]),'m/yr \n')
 fig = plt.figure(figsize=(15,7.5) , dpi=100)
-plot = plt.contourf(X, Y, v)#,cmap="Blues",vmin = np.min(v), vmax = np.max(v))]
-manager = plt.get_current_fig_manager()
-manager.window.showMaximized()
+plot = [plt.contourf(X, Y, v,cmap="Blues")]
 clb = fig.colorbar(plot[0], orientation='vertical',aspect=50, pad=-0.1)
 plt.ylabel(r'$z$')
 plt.xlabel(r'$x$')
-#plt.xlim([Grid.xmin, Grid.xmax])
-#plt.ylim([Grid.ymax,Grid.ymin])
-#plt.axis('scaled')
+plt.axis('scaled')
 plt.savefig(f'HMA_G0240_2018_velocity.pdf',bbox_inches='tight', dpi = 600)
