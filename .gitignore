@@ -1,3 +1,4 @@
+*.tif
 *.pdf
 *pycache
 *exe
