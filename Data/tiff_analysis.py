@@ -54,7 +54,6 @@ def extract(vel_filename,thickness_filename,ds_out):
     ERRTHICKNESS            = ERRTHICKNESS_file.GetRasterBand(1)
     ds_out.ERRTHICKNESS     = np.array(ERRTHICKNESS.ReadAsArray())  #thickness error [m]
     
-    ds = nc.Dataset('HMA_G0240_2018.nc')
     #ds_out.x = ds['x'][:]           #x location [m]
     #ds_out.y = ds['y'][:]           #y location [m]
     ds_out.x = spatial_resolution*np.linspace(0,np.shape(ds_out.VX)[1],np.shape(ds_out.VX)[1]) #x location [m]  
@@ -71,14 +70,27 @@ def plotting(ds_out):
     print('Max velocity', np.max(ds_out.V[~np.isnan(ds_out.V)]),    'm/yr \n',\
           'Min velocity', np.min(ds_out.V[~np.isnan(ds_out.V)]),    'm/yr \n',\
           'Avg velocity', np.average(ds_out.V[~np.isnan(ds_out.V)]),'m/yr \n')
-    fig = plt.figure(figsize=(15,7.5) , dpi=100)
+    ds_out.V[ds_out.V>1e10] = np.nan
+    fig = plt.figure(figsize=(15,7.5), dpi=100)
     plot = [plt.contourf(ds_out.X, ds_out.Y, ds_out.V,cmap="coolwarm")]
     clb = fig.colorbar(plot[0], orientation='vertical',aspect=50, pad=-0.1)
     clb.set_label(r'Velocity (m/yr)')
-    plt.ylabel(r'$y$')
-    plt.xlabel(r'$x$')
+    plt.ylabel(r'$y [m]$')
+    plt.xlabel(r'$x [m]$')
     plt.axis('scaled')
     plt.savefig(f'{ds_out.filename}_velocity.pdf',bbox_inches='tight', dpi = 600)
+
+    #Thickness 
+    fig = plt.figure(figsize=(15,7.5) , dpi=100)
+    plot = [plt.contourf(ds_out.X,ds_out.Y, ds_out.THICKNESS,cmap="coolwarm")]
+    clb = fig.colorbar(plot[0], orientation='vertical',aspect=50, pad=-0.1)
+    clb.set_label(r'Thickness (m)')
+    plt.ylabel(r'$y (m)$')
+    plt.xlabel(r'$x (m)$')
+    plt.axis('scaled')
+    plt.savefig(f'{ds_out.filename}_thickness.pdf',bbox_inches='tight', dpi = 600)
+    
+    
     '''
     #X velocity
     fig = plt.figure(figsize=(15,7.5) , dpi=100)
