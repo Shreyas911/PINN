@@ -28,6 +28,7 @@ class dataset:
 def extract(vel_filename,thickness_filename,ds_out):
     fn  = vel_filename + '.tif' 
     t_fn= thickness_filename + '.tif' 
+    spatial_resolution = 50 #spatial resolution [m]
     #X  = gdal.Open(f'./RGI-13-15_velocity/X_{data}.tif')
     #Y  = gdal.Open(f'./RGI-13-15_velocity/Y_{data}.tif')
 
@@ -54,8 +55,11 @@ def extract(vel_filename,thickness_filename,ds_out):
     ds_out.ERRTHICKNESS     = np.array(ERRTHICKNESS.ReadAsArray())  #thickness error [m]
     
     ds = nc.Dataset('HMA_G0240_2018.nc')
-    ds_out.x = ds['x'][:]           #x location [m]
-    ds_out.y = ds['y'][:]           #y location [m]
+    #ds_out.x = ds['x'][:]           #x location [m]
+    #ds_out.y = ds['y'][:]           #y location [m]
+    ds_out.x = spatial_resolution*np.linspace(0,np.shape(ds_out.VX)[1],np.shape(ds_out.VX)[1]) #x location [m]  
+    ds_out.y = spatial_resolution*np.linspace(0,np.shape(ds_out.VX)[0],np.shape(ds_out.VX)[0]) #y location [m]    
+    
     #Making a meshgrid
     ds_out.X,ds_out.Y = np.meshgrid(ds_out.x,ds_out.y)
     ds_out.filename = vel_filename
@@ -75,7 +79,7 @@ def plotting(ds_out):
     plt.xlabel(r'$x$')
     plt.axis('scaled')
     plt.savefig(f'{ds_out.filename}_velocity.pdf',bbox_inches='tight', dpi = 600)
-    
+    '''
     #X velocity
     fig = plt.figure(figsize=(15,7.5) , dpi=100)
     plot = [plt.contourf(ds_out.X,ds_out.Y, ds_out.VX,cmap="coolwarm")]
@@ -95,7 +99,7 @@ def plotting(ds_out):
     plt.xlabel(r'$x$')
     plt.axis('scaled')
     plt.savefig(f'{ds_out.filename}_Yvelocity.pdf',bbox_inches='tight', dpi = 600)
-
+    '''
 
 #filenames
 data_vel     = 'RGI-13-15.1_2022February09' 
