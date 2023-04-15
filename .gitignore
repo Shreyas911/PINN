@@ -3,3 +3,5 @@
 *pycache
 *exe
 *.nc
+.ipynb_checkpoints/*
+.DS_STORE
